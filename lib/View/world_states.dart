@@ -1,4 +1,8 @@
+import 'package:covid19/Model/WorldStateModel.dart';
+import 'package:covid19/Services/states_services.dart';
+import 'package:covid19/View/countries_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 class WorldStateScreen extends StatefulWidget {
@@ -29,6 +33,7 @@ class _WorldStateScreenState extends State<WorldStateScreen> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    StatesServices statesServices = StatesServices();
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -36,42 +41,73 @@ class _WorldStateScreenState extends State<WorldStateScreen> with TickerProvider
           child: Column(
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * .01,),
-              PieChart(
-                  dataMap: {
-                    "Total" : 20,
-                    "Recovered" : 15,
-                    "Deaths" : 5,
-                  },
-                chartRadius: MediaQuery.of(context).size.width/3.2,
-                legendOptions: LegendOptions(
-                  legendPosition: LegendPosition.left
-                ),
-                animationDuration: Duration(milliseconds: 1200),
-                chartType: ChartType.ring,
-                colorList: colorList,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*.06),
-                child: Card(
-                  child: Column(
+              FutureBuilder(
+                future: statesServices.fetchWorldStatesRecord(),
+                  builder: (context,AsyncSnapshot<WorldStateModel> snapshot){
+                if(!snapshot.hasData){
+                  return Expanded(
+                    flex: 1,
+                    child: SpinKitFadingCircle(
+                      color: Colors.white,
+                      size: 50,
+                      controller: _controller,
+                    ),
+                  );
+                }else{
+                  return Column(
                     children: [
-                      ReuseableRow(title: 'total', value: '200'),
-                      ReuseableRow(title: 'total', value: '200'),
-                      ReuseableRow(title: 'total', value: '200'),
+                      PieChart(
+                        dataMap: {
+                          "Total" : double.parse(snapshot.data!.cases!.toString()),
+                          "Recovered" : double.parse(snapshot.data!.recovered.toString()),
+                          "Deaths" : double.parse(snapshot.data!.deaths.toString()),
+                        },
+                        chartValuesOptions: ChartValuesOptions(
+                          showChartValuesInPercentage: true
+                        ),
+                        chartRadius: MediaQuery.of(context).size.width/3.2,
+                        legendOptions: LegendOptions(
+                            legendPosition: LegendPosition.left
+                        ),
+                        animationDuration: Duration(milliseconds: 1200),
+                        chartType: ChartType.ring,
+                        colorList: colorList,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*.06),
+                        child: Card(
+                          child: Column(
+                            children: [
+                              ReuseableRow(title: 'Total', value: snapshot.data!.cases.toString()),
+                              ReuseableRow(title: 'Deaths', value: snapshot.data!.deaths.toString()),
+                              ReuseableRow(title: 'Recovered', value: snapshot.data!.recovered.toString()),
+                              ReuseableRow(title: 'Active', value: snapshot.data!.active.toString()),
+                              ReuseableRow(title: 'Critical', value: snapshot.data!.critical.toString()),
+                              ReuseableRow(title: 'Today Deaths', value: snapshot.data!.todayDeaths.toString()),
+                              ReuseableRow(title: 'Today Recovered', value: snapshot.data!.todayRecovered.toString()),
+                              ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap : (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CountriesList()));
+                    },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color(0xff1aa260),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text('Track Country'),
+                          ),
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Color(0xff1aa260),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Text('Track Country'),
-                ),
-              )
+                  );
+                }
+              }),
             ],
           ),
         ),
