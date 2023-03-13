@@ -15,7 +15,7 @@ class WorldStateScreen extends StatefulWidget {
 class _WorldStateScreenState extends State<WorldStateScreen> with TickerProviderStateMixin{
 
   late final AnimationController _controller = AnimationController(
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       vsync: this
   )..repeat();
   @override
@@ -26,9 +26,9 @@ class _WorldStateScreenState extends State<WorldStateScreen> with TickerProvider
   }
   
   final colorList = <Color> [
-    Color(0xff4285f4),
-    Color(0xff1aa260),
-    Color(0xffde5246),
+    const Color(0xff4285f4),
+    const Color(0xff1aa260),
+    const Color(0xffde5246),
   ];
 
   @override
@@ -62,14 +62,14 @@ class _WorldStateScreenState extends State<WorldStateScreen> with TickerProvider
                           "Recovered" : double.parse(snapshot.data!.recovered.toString()),
                           "Deaths" : double.parse(snapshot.data!.deaths.toString()),
                         },
-                        chartValuesOptions: ChartValuesOptions(
+                        chartValuesOptions: const ChartValuesOptions(
                           showChartValuesInPercentage: true
                         ),
                         chartRadius: MediaQuery.of(context).size.width/3.2,
-                        legendOptions: LegendOptions(
+                        legendOptions: const LegendOptions(
                             legendPosition: LegendPosition.left
                         ),
-                        animationDuration: Duration(milliseconds: 1200),
+                        animationDuration: const Duration(milliseconds: 1200),
                         chartType: ChartType.ring,
                         colorList: colorList,
                       ),
@@ -91,15 +91,15 @@ class _WorldStateScreenState extends State<WorldStateScreen> with TickerProvider
                       ),
                       GestureDetector(
                         onTap : (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => CountriesList()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const CountriesList()));
                     },
                         child: Container(
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Color(0xff1aa260),
+                            color: const Color(0xff1aa260),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Center(
+                          child: const Center(
                             child: Text('Track Country'),
                           ),
                         ),
@@ -133,8 +133,8 @@ class ReuseableRow extends StatelessWidget {
               Text(value),
             ],
           ),
-          SizedBox(height: 5,),
-          Divider()
+          const SizedBox(height: 5,),
+          const Divider()
         ],
       ),
     );
